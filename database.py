@@ -5,7 +5,7 @@ class Database:
     def __init__(self, config):
         self.users = []
 
-        # загрузка профилей пользователей из бд
+        # load user profile from database
         files = os.listdir('profiles')
         for i in range(len(files)):
             with open('profiles/'+files[i], 'r', encoding='utf-8') as fh:
@@ -23,7 +23,7 @@ class Database:
         for i in range(len(self.users)):
             if(self.users[i]['id'] == id):
                 self.users[i]['liked'].append(liked_id)
-                # проверяем взаимность
+                # check reciprocity
                 partner = None
                 for j in range(len(self.users)):
                     if self.users[j]['id'] == liked_id:

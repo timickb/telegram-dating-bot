@@ -21,7 +21,7 @@ class Handler:
     def getLang(self):
         return self.lang
 
-    # Вывод анкеты следующего человека, который нам подходит и которого мы еще не оценили
+    # Print next suitable account which we haven't rate
     def printNext(self, db, bot, update):
         uid = update.message.from_user.id
         cid = update.message.chat_id
@@ -49,7 +49,7 @@ class Handler:
         user = db.getUserByID(uid)
         status = user['dialog_status']
 
-        # Ввод имени пользователя
+        # Enter username
         if status == 'write_name':
             if self.valr.validName(update.message.text):
                 db.updateUserData(uid, 'name', str(update.message.text).strip())
@@ -58,7 +58,7 @@ class Handler:
             else:
                 bot.sendMessage(cid, self.lang['invalid_name'])
 
-        # Ввод возраста пользователя
+        # Enter age
         elif status == 'write_age':
             if self.valr.validAge(update.message.text):
                 db.updateUserData(uid, 'age', int(update.message.text))
@@ -67,13 +67,13 @@ class Handler:
             else:
                 bot.sendMessage(cid, self.lang['invalid_age'])
 
-        # Ввод города пользователя
+        # Enter city
         elif status == 'write_city':
             db.updateUserData(uid, 'city', str(update.message.text))
             db.updateUserData(uid, 'dialog_status', 'write_sex')  
             bot.sendMessage(cid, self.lang['write_sex'], reply_markup=self.markup['sexChoice'])
 
-        # Выбор пола пользователя
+        # Choose gender
         elif status == 'write_sex':
             if update.message.text == self.lang['man']:
                 db.updateUserData(uid, 'sex', 0)
@@ -85,19 +85,19 @@ class Handler:
             db.updateUserData(uid, 'dialog_status', 'write_desc')  
             bot.sendMessage(cid, self.lang['write_desc'])
 
-        # Ввод описания пользователя
+        # Write description
         elif status == 'write_desc':
             db.updateUserData(uid, 'desc', str(update.message.text))
             db.updateUserData(uid, 'dialog_status', 'write_contact')
             bot.sendMessage(cid, self.lang['write_contact'])
         
-        # Ввод контактов пользователя
+        # Write contacts
         elif status == 'write_contact':
             db.updateUserData(uid, 'contact', str(update.message.text))
             db.updateUserData(uid, 'dialog_status', 'write_p_sex')
             bot.sendMessage(cid, self.lang['write_p_sex'], reply_markup=self.markup['sexChoice'])
 
-        # Выбор пола партнера
+        # Choose partner's gender
         elif status == 'write_p_sex':
             if update.message.text == self.lang['man']:
                 db.updateUserData(uid, 'p_sex', 0)
@@ -109,7 +109,7 @@ class Handler:
             db.updateUserData(uid, 'dialog_status', 'write_p_min_age')  
             bot.sendMessage(cid, self.lang['write_p_min_age'])
 
-        # Ввод минимального возраста партнера
+        # Enter min partner's age
         elif status == 'write_p_min_age':
             if self.valr.validAge(update.message.text):
                 db.updateUserData(uid, 'p_min_age', int(update.message.text))
@@ -118,7 +118,7 @@ class Handler:
             else:
                 bot.sendMessage(cid, self.lang['invalid_age'])
 
-        # Ввод максимального возраста партнера
+        # Enter max partner's age
         elif status == 'write_p_max_age':
             if self.valr.validAge(update.message.text):
                 db.updateUserData(uid, 'p_max_age', int(update.message.text))
@@ -127,7 +127,7 @@ class Handler:
             else:
                 bot.sendMessage(cid, self.lang['invalid_age'])
 
-        # Обрабатываем фотографию, спрашиваем, все ли верно
+        # Handle the photo and ask if all right
         elif status == 'send_photo':
             photo = update.message.photo[2]
             if self.valr.validPhoto(photo):
@@ -146,7 +146,7 @@ class Handler:
                 bot.sendMessage(cid, self.lang['invalid_photo'])
             
 
-        # Завершение регистрации, начало выдачи подходящих анкет
+        # Start giving accounts
         elif status == 'registered':
             if update.message.text == self.lang['confirm_reg']:
                 db.updateUserData(uid, 'dialog_status', 'process')
@@ -158,10 +158,10 @@ class Handler:
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
 
-        # Цикл поиска
+        # Search cycle
         elif status == 'process':
             user = db.getUserByID(uid)
-            # Оценка анкеты
+            # Account's rate
             if update.message.text == self.lang['like']:
                 mutually = db.addLiked(uid, bot, update)
                 if mutually != None:
@@ -171,7 +171,7 @@ class Handler:
             elif update.message.text == self.lang['dislike']:
                 db.addDisliked(uid, bot, update)
                 self.printNext(db, bot, update)
-            # Главное меню
+            # Main menu
             elif update.message.text == '1' or update.message.text == self.lang['menu_continue']:
                 self.printNext(db, bot, update)
             elif update.message.text == '2' or update.message.text == self.lang['menu_stop']:
@@ -188,11 +188,11 @@ class Handler:
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
 
-        # Анкета заморожена
+        # Account is freezed
         elif status == 'freezed':
             if update.message.text == '1':
                 db.updateUserData(uid, 'dialog_status', 'process')
                 self.printNext(db, bot, update)
-        # Остальные случаи
+        # Other situations
         else:
             bot.sendMessage(cid, self.lang['not_understand'])

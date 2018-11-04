@@ -11,7 +11,7 @@ def init_bot(config, lang, token):
     global handler
     global bc
 
-    # Инициализируем переменные
+    # Initilizing
     db = Database(config)
     handler = Handler(lang)
     updater = Updater(token['botToken'])
@@ -20,33 +20,33 @@ def init_bot(config, lang, token):
 
     print('Dating Bot started.')
 
-    # Добавляем обработчики сообщений
+    # Add message handlers
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('help', help))
     dp.add_handler(MessageHandler(Filters.all, process))
     dp.add_handler(CallbackQueryHandler(callback))
     dp.add_error_handler(error)
 
-    # Запускаем поток вещания
+    # Start broadcasting thread
     #bc.start()
 
-    # Запускаем бота
+    # Start bot
     updater.start_polling()
     updater.idle()
 
 
 def start(bot, update):
-    # Получаем ID пользователя в Telegram
+    # Get user Telegram ID
     uid = str(update.message.from_user.id)
     cid = update.message.chat_id
-    # Находим его в нашей базе
+    # Fimd user in our database
     user = db.getUserByID(int(uid))
 
-    # Если он зарегистрирован, продолжаем его сессию:
+    # If found, continue
     if(user != None):
         if user['dialog_status'] == 'process':
             bot.sendMessage(cid, handler.getLang()['already_in'])
-    # Если нет - проводим процедуру регистрации:
+    # Else register him
     else:
         db.addUser({'id': int(uid), 'chat_id': int(cid), 'dialog_status': 'start', 'liked': [], 'disliked': []})
         bot.sendMessage(update.message.chat_id, handler.getLang()['greeting_new'])
