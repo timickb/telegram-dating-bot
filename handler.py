@@ -35,8 +35,7 @@ class Handler:
                 partner = db.getUsers()[i]
                 db.updateUserData(uid, 'last_profile', partner['id'])
                 bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'], 
-                    caption=self.lang['account_info'] % (partner['name'], partner['age'], partner['city'], partner['desc']),
-                    reply_markup=self.markup['mainMenu'])
+                    caption=self.lang['account_info'] % (partner['name'], partner['age'], partner['city'], partner['desc']),)
                 return
         bot.sendMessage(cid, self.lang['no_partners'], reply_markup=self.markup['mainMenu'])
     
