@@ -15,7 +15,11 @@ class Handler:
                 [KeyboardButton(self.lang['menu_stop'])],
                 [KeyboardButton(self.lang['menu_delete'])],
                 [KeyboardButton(self.lang['menu_edit'])],
-                [KeyboardButton(self.lang['menu_show'])]])
+                [KeyboardButton(self.lang['menu_show'])]]),
+            'confirmReg': ReplyKeyboardMarkup(
+                    [[KeyboardButton(self.lang['confirm_reg'])],
+                    [KeyboardButton(self.lang['repeat_reg'])]],
+                    resize_keyboard=True, one_time_keyboard=True)
         }
     
     def getLang(self):
@@ -135,13 +139,8 @@ class Handler:
                 db.updateUserData(uid, 'dialog_status', 'registered')
                 db.updateUserData(uid, 'photo', photo.file_id)
 
-                markup = ReplyKeyboardMarkup(
-                    [[KeyboardButton(self.lang['confirm_reg'])],
-                    [KeyboardButton(self.lang['repeat_reg'])]],
-                    resize_keyboard=True, one_time_keyboard=True)
-
                 self.printMe(db, bot, update)
-                bot.sendMessage(cid, self.lang['registered'], reply_markup=markup)
+                bot.sendMessage(cid, self.lang['registered'], reply_markup=self.markup['confirmReg'])
             else:
                 bot.sendMessage(cid, self.lang['invalid_photo'])
             
@@ -154,9 +153,9 @@ class Handler:
                 self.printNext(db, bot, update)
             elif update.message.text == self.lang['repeat_reg']:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
-                bot.sendMessage(cid, self.lang['rewrite'])
+                bot.sendMessage(cid, self.lang['rewrite'], reply_markup=self.markup['mainMenu'])
             else:
-                bot.sendMessage(cid, self.lang['incorrect_answer'])
+                bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
 
         # Search cycle
         elif status == 'process':
@@ -186,7 +185,7 @@ class Handler:
             elif update.message.text == '5' or update.message.text == self.lang['menu_show']:
                 self.printMe(db, bot, update)
             else:
-                bot.sendMessage(cid, self.lang['incorrect_answer'])
+                bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
 
         # Account is freezed
         elif status == 'freezed':
