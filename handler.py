@@ -35,16 +35,17 @@ class Handler:
                 partner = db.getUsers()[i]
                 db.updateUserData(uid, 'last_profile', partner['id'])
                 bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'], 
-                    caption=self.lang['account_info'] % (partner['name'], partner['age'], partner['city'], partner['desc']))
+                    caption=self.lang['account_info'] % (partner['name'], partner['age'], partner['city'], partner['desc']),
+                    reply_markup=self.markup['mainMenu'])
                 return
-        bot.sendMessage(cid, self.lang['no_partners'], reply_markup=None)
+        bot.sendMessage(cid, self.lang['no_partners'], reply_markup=self.markup['mainMenu'])
     
     def printMe(self, db, bot, update):
         uid = update.message.from_user.id
         cid = update.message.chat_id
         user = db.getUserByID(uid)
         bot.sendPhoto(cid, user['photo'], 
-                caption=self.lang['account_info'] % (user['name'], user['age'], user['city'], user['desc']), reply_markup=None)
+                caption=self.lang['account_info'] % (user['name'], user['age'], user['city'], user['desc']), reply_markup=self.markup['mainMenu'])
         
 
     def handle(self, db, bot, update):
