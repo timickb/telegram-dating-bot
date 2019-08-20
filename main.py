@@ -83,12 +83,12 @@ def main():
         lang = None
         token = None
         with codecs.open('config.yml', 'r', 'utf_8_sig') as stream:
-            config = yaml.load(stream)
+            config = yaml.load(stream, Loader=yaml.SafeLoader)
         with codecs.open('token.yml', 'r', 'utf_8_sig') as stream:
-            token = yaml.load(stream)
+            token = yaml.load(stream, Loader=yaml.SafeLoader)
         langFileName = 'lang/' + config['lang'] + '.yml'
         with codecs.open(langFileName, 'r', 'utf_8_sig') as stream:
-            lang = yaml.load(stream)
+            lang = yaml.load(stream, Loader=yaml.SafeLoader)
     except IOError as err:
         print(err) 
         print('An error occured while reading config files')

@@ -6,6 +6,8 @@ class Database:
         self.users = []
 
         # load user profile from database
+        if not os.path.exists("profiles"):
+            os.mkdir('profiles')
         files = os.listdir('profiles')
         for i in range(len(files)):
             with open('profiles/'+files[i], 'r', encoding='utf-8') as fh:
