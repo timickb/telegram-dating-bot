@@ -1,9 +1,11 @@
 import json
 import os
+import logging
 
 class Database:
     def __init__(self, config):
         self.users = []
+        self.logger = logging.getLogger(__name__)
 
         # load user profile from database
         if not os.path.exists("profiles"):

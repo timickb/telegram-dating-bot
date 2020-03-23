@@ -1,10 +1,12 @@
 from telegram import ReplyKeyboardMarkup, KeyboardButton, Bot, Update
 from validator import Validator
+import logging
 
 class Handler:
     def __init__(self, lang):
         self.lang = lang
         self.valr = Validator()
+        self.logger = logging.getLogger(__name__)
         self.markup = {
             'sexChoice': ReplyKeyboardMarkup([[KeyboardButton(self.lang['man'])], 
                 [KeyboardButton(self.lang['woman'])]],
@@ -92,9 +94,7 @@ class Handler:
         # Write description
         elif status == 'write_desc':
             db.updateUserData(uid, 'desc', str(update.message.text))
-            db.updateUserData(uid, 'dialog_status', 'write_contact')
-            bot.sendMessage(cid, self.lang['write_contact'])
-        
+            db.updateUserDatalogger = logging.getLogger(__name__)
         # Write contacts
         elif status == 'write_contact':
             db.updateUserData(uid, 'contact', str(update.message.text))
